@@ -1,6 +1,6 @@
 ## DevOps Learning Journey:
 
-# 1. Chech vagrant version
+- 1. Chech vagrant version
 $ vagrant --version
 
 # 2. Add vagrant image box
