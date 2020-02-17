@@ -1,7 +1,6 @@
-## DevOps Learning Journey:
-
-## VAGRANT 
-# Install vagrant
+# DevOps Learning Journey:
+### VAGRANT 
+#### Install vagrant:
 - 1. Chech vagrant version
 `
 $ vagrant --version
@@ -22,8 +21,14 @@ $ vagrant init ubuntu/xenial64
 $ vagrant up
 `
 
-## ANSIBLE 
-# Install Ansible on Ubuntu
+### Vagrant WinNFSd
+#### Manage and adds support for NFS on Windows:
+`
+$ vagrant plugin install vagrant-winnfsd
+`
+
+### ANSIBLE 
+#### Install Ansible on Ubuntu:
 
 - 1. Add Ansible Repository & dependencies:
 `
@@ -42,7 +47,7 @@ sudo apt-get install -y  ansible
 $ echo -e "[servers]\nclient-node ansible_ssh_user=vagrant ansible_ssh_host=192.168.0.104" | sudo tee -a /etc/ansible/inventory
 `
 
-# OR
+##### OR
 `
 echo -e "[servers]\n192.168.0.104\n" | sudo tee -a /etc/ansible/inventory
 123.123.123.123
@@ -67,45 +72,45 @@ $ ansible [REMOTE_HOST_SERVER]  -i ansible/inventory.ini-m ping
 $ ansible  [REMOTE_HOST_GROUP] -i ansible/inventory.ini -m ping
 `
 
-# SHOW ALL inventory IN A GROUP
+#### SHOW ALL inventory IN A GROUP:
 `
 $ ansinble [REMOTE_HOST_GROUP] --list-inventory -i ansible/inventory.ini
 `
 
-# Example (ping server groups, uptime for server groups)
+#### Example (ping server groups, uptime for server groups):
 `
 $ ansible servers -i ansible/inventory.ini -m ping 
 $ ansible servers -i ansible/inventory.ini -m command -args 'uptime' 
 $ ansible servers -i ansible/inventory.ini -m command -args 'sudo apt install -y appache2'
 `
 
-# RUN Playbook with check
+#### RUN Playbook with check:
 `
 $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --check
 `
 
-# Apply to ALL group
+#### Apply to ALL group:
 `
 $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 `
 
-# Apply ONLY to loadbalancer group
+#### Apply ONLY to loadbalancer group:
 `
 $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml -l loadbalancer
 `
 
-# Apply ONLY to groups of this tags
+#### Apply ONLY to groups of this tags:
 `
 $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --tags services
 $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-password-file .vault-pass.txt
 `
 
 ### PACKAGES MODULES
-# OS packages:
+#### OS packages:
 - name: install jre
   packages: name=openjdk-8-jre state=installed
 
-# Package Repository 
+#### Package Repository:
 `
 - name: nodesource repository
   apt_repository:
@@ -113,7 +118,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
     state: present
 `
 
-# Python packages:
+#### Python packages:
 `
 - name: tensorflow
   pip: 
@@ -122,7 +127,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
 `
 
 ### FILES MODULES
-# Copy file to remote system
+#### Copy file to remote system:
 `
 - name: configure
   copy:
@@ -133,7 +138,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    mode: 0644
 `
 
-# Copy Files, but update based on variables
+#### Copy Files, but update based on variables:
 `
 - name: standalone xml
   template:
@@ -144,7 +149,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    mode: 0644
 `
 
-# Create/delete files/dirs
+#### Create/delete files/dirs:
 `
 - name: installing directory
   file:
@@ -155,7 +160,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    mode: 0755
 `
 
-# Update a line in a file
+#### Update a line in a file:
 `
 - name: ensure localhost in hosts
   lineinfile:
@@ -167,7 +172,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    mode: 0644
 `
 
-# Extra from tar, zip, and so on
+#### Extra from tar, zip, and so on:
 `
 - name: install
   unarchive:
@@ -179,19 +184,19 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
 `
 
 ### SYSTEM MODULES
-# service packages:
+#### service packages:
 `
 - name: service
   service: name=apps state=installed enabled=yes
 `
 
-# group packages:
+#### group packages:
 `
 - name: group
   group: name=apps state=present
 `
 
-# CRON
+#### cron:
 `
 - name: schedule yum autoupdate
   cron:
@@ -203,7 +208,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    job: "YUMINTERACTIVE: 0 /usr/sbin/yum-autoupdate"
 `
 
-# USER
+#### user
 `
 - name: user
   user:
@@ -213,7 +218,7 @@ $ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --vault-passwor
    state: present
    system: yes
 `
-# USER
+# Seboolean
 `
 - name: allow httpd to make network connections
   seboolean:
