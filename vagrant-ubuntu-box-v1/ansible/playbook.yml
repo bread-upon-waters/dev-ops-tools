@@ -1,0 +1,23 @@
+---
+- hosts: databases
+  become: true
+  tasks:
+    - name: install postgresql
+      package: name=postgresql state=installed
+    - name: service
+      service: name=postgresql state=started enabled=yes
+      tags: services
+- hosts: webservers
+  become: true
+  tasks:
+    - name: install jre
+      package: name=openjdk-8-jre state=installed
+    - name: service
+      service: name=webservice state=started enabled=yes
+- hosts: loadbalancer
+  become: true
+  tasks:
+    - name: install loadbalancer
+      package: name=haproxy state=installed
+      tags: services
+...

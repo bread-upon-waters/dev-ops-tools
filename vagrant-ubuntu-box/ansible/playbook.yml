@@ -1,0 +1,15 @@
+---
+- hosts: databases
+  become: true
+  roles:
+    - db
+- hosts: webservers
+  become: true
+  roles:
+    - java
+    - apps
+- hosts: loadbalancer
+  become: true
+  roles:
+    - lb
+...

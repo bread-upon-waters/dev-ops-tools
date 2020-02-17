@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_API_VERSION = "2"
+Vagrant.configure(VAGRANT_API_VERSION) do |config|
+
+    
+  VAGRANT_BOX_IMAGE = "ubuntu/xenial64"
+  MACHINE_BASE_IP = "192.168.33."
+  MACHINE_COUNT = 1
+
+  (0...MACHINE_COUNT).each do |machine_id|
+    config.vm.define "machine0#{machine_id + 1}" do |machine|
+      machine.vm.hostname = "machine0#{machine_id + 1}"
+      machine.vm.box = VAGRANT_BOX_IMAGE
+      machine.vm.network "private_network", ip: "#{MACHINE_BASE_IP}#{11 + machine_id}"
+      machine.vm.provider :virtualbox  do |vb|
+        vb.gui = true
+        vb.customize ["modifyvm", :id, "--name", "machine0#{machine_id + 1}"]
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize ["modifyvm", :id, "--memory", 1024]
+        # vb.customize ["modifyvm", :id, "--cableconnected1", "off"]
+      end
+      # machine.ssh.insert_key = true
+      if machine_id == MACHINE_COUNT
+        machine.vm.provision :shell, inline: "echo Great stuff!"
+      end
+    end
+  end
+
+  config.vm.define :ansiblecntrl do |ansiblecntrl|
+    ansiblecntrl.vm.hostname = "ansiblecntrl"
+    ansiblecntrl.vm.box = VAGRANT_BOX_IMAGE
+    ansiblecntrl.vm.network "private_network", ip: "#{MACHINE_BASE_IP}#{10}"
+    ansiblecntrl.vm.synced_folder ".", "/vagrant", type: "nfs"
+
+    ansiblecntrl.vm.provider "virtualbox" do |vb|
+      vb.gui = true
+      vb.customize ["modifyvm", :id, "--name", "ansiblecntrl"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      vb.customize ["modifyvm", :id, "--memory", 1024]
+    end
+
+    ansiblecntrl.vm.provision "shell", path: "ansible-script.sh"
+    ansiblecntrl.vm.provision "shell", inline: <<-SHELL
+      echo "Running ansible control successfully"
+    SHELL
+  end
+
+end

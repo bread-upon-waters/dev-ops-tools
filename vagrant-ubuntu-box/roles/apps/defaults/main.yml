@@ -1,0 +1,5 @@
+apps_path: /opt/apps
+apps_user: apps
+apps_group: apps
+apps_db_name: apps
+apps_db_user: appsuser

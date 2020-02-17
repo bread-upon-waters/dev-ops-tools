@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: building docker image using w/ear file
+      command: docker build my-docker-image .
+      args:
+        chdir: /opt/docker
+    - name: building docker container my-docker-image
+      command: docker run -d --name my-docker-container -p 8080:8080 my-docker-image
+...

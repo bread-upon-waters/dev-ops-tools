@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_VERSION = "2"
+VAGRANT_BOX_IMAGE = "bento/centos-8"
+MACHINE_COUNT = 3
+MACHINE_BASE_IP = "192.168.33."
+Vagrant.configure(VAGRANT_VERSION) do |config|
+
+  config.vm.define "master" do |machine|
+    machine.vm.hostname = "master"
+    machine.vm.box = VAGRANT_BOX_IMAGE
+    machine.vm.synced_folder ".", "/vagrant", type: "nfs"
+    machine.vm.network "private_network", ip: "192.168.33.10"
+    machine.vm.provider "virtualbox" do |vb|
+      vb.gui = false
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      vb.customize ["modifyvm", :id, "--name", "master"]
+      vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
+      vb.customize ["modifyvm", :id, "--memory", 1024]
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--cpus", 1]
+    end
+    machine.vm.provision "shell", inline: <<-SHELL
+      yum install -y epel-release
+      yum install -y ansible
+    SHELL
+  end
+  
+  (1...MACHINE_COUNT).each do |machine_id|
+    config.vm.define "machine0#{machine_id}" do |machine|
+      machine.vm.hostname = "machine0#{machine_id}"
+      machine.vm.box = VAGRANT_BOX_IMAGE
+      machine.vm.network "private_network", ip: "#{MACHINE_BASE_IP}#{11 + machine_id}"
+      machine.vm.provider :virtualbox  do |vb|
+        vb.gui = false
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize ["modifyvm", :id, "--name", "machine0#{machine_id}"]
+        vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
+        vb.customize ["modifyvm", :id, "--memory", 1024]
+        vb.customize ["modifyvm", :id, "--ioapic", "on"]
+        vb.customize ["modifyvm", :id, "--cpus", 1]
+      end
+      machine.ssh.insert_key = true
+      if machine_id == MACHINE_COUNT
+        machine.vm.provision :shell, inline: "echo Great stuff!"
+      end
+    end
+  end
+end

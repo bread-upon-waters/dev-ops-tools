@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+javapackage = ENV['java_package'] || "openjdl-8-jre"
+javahome = ENV['java_home'] || "/usr/lib/jvm/java-8-jdk-amd64/jre"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  VAGRANT_BOX_IMAGE = "ubuntu/xenial64"
+  MACHINE_COUNT = 1
+  MACHINE_BASE_IP = "192.168.33."
+
+  (0...MACHINE_COUNT).each do |machine_id|
+    config.vm.define "machine00#{machine_id + 1}" do |machine|
+      machine.vm.hostname = "machine00#{machine_id+ 1}"
+      machine.vm.box = VAGRANT_BOX_IMAGE
+      machine.vm.network "private_network", ip: "#{MACHINE_BASE_IP}#{11 + machine_id+ 1}"
+      machine.vm.provider :virtualbox  do |vb|
+        vb.gui = false
+        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        vb.customize ["modifyvm", :id, "--name", "machine00#{machine_id+ 1}"]
+        vb.customize ["modifyvm", :id, "--memory", 1024]
+        vb.customize ["modifyvm", :id, "--cpus", 1]
+      end
+      machine.ssh.insert_key = true
+     
+      #if machine_id == MACHINE_COUNT
+        config.vm.provision :shell, inline: <<-SHELL
+          apt-get update -y && apt-get install -y python && sudo apt-get install -y ansible
+          echo "Great stuff!"
+        SHELL
+
+        config.vm.provision "ansible" do |ansible|
+          ansible.compatibility_mode = "2.0"
+          ansible.playbook = "playbook.yml"
+          ansible.extra_vars = {
+            java_package: javapackage,
+            java_home: javahome
+          }
+        end
+     # end
+      
+    end
+  
+    
+    
+
+    
+
+  end
+
+end
