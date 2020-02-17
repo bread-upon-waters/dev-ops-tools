@@ -1,5 +1,7 @@
 ## DevOps Learning Journey:
 
+## VAGRANT 
+# Install vagrant
 - 1. Chech vagrant version
 `
 $ vagrant --version
@@ -21,7 +23,7 @@ $ vagrant up
 `
 
 ## ANSIBLE 
-# Install Ansible on Ubunti
+# Install Ansible on Ubuntu
 
 - 1. Add Ansible Repository & dependencies:
 `
