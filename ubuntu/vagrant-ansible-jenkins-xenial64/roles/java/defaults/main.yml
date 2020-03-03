@@ -1,0 +1,16 @@
+---
+ansible_user: vagrant
+
+java_version: oracle-java8-installer
+java_accepted_oracle_license: shared/accepted-oracle-license-v1-1
+java_repo_url_key: 7BB9C367
+# java_repo_url: deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main 
+java_repo_url: ppa:webupd8team/java
+
+java_home: "export JAVA_HOME=/usr/lib/jvm/java-8-oracle"
+java_packages:
+  - ca-certificates
+  #- oracle-java8-installer
+  #- oracle-java8-set-default 
+## oracle-java8-set-default already add the oracle-java8-installer as dependency 
+...

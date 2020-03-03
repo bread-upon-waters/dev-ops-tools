@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - debug:
+        msg: "Starting ..."
+  roles:
+    - { role: java, become: true }
+    - { role: jenkins, become: true }
+  # tags: jenkins
+
+  tasks:
+    - debug:
+        msg: "still in progress ..."
+  post_tasks:
+    - debug:
+        msg: "Done, goodbye!"
+...

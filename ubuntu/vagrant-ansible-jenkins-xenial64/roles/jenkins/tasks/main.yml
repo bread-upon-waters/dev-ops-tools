@@ -1,0 +1,30 @@
+---
+# - include: setup.yml
+
+# - include: plugins.yml
+#   when: pre_install | default(false) == false
+
+- name: Add Jenkins apt pkg key.
+  apt_key: 
+    url: "{{ jenkins_repo_key_url }}"
+    state: present
+
+- name: Add Jenkins apt repository.
+  apt_repository:
+    repo: "{{ jenkins_repo_url }}"
+    state: present
+    filename: 'jenkins-stable'
+    update_cache: yes
+
+- name: Install Jenkins
+  package: name={{ item }} state=latest
+  with_items:
+    - jenkins
+
+- name: Change Jenkins JAVA options.
+  lineinfile: dest=/etc/sysconfig/jenkins regexp=^JENKINS_JAVA_OPTIONS= line=JENKINS_JAVA_OPTIONS="{{ jenkins.java_options}}"
+
+- name: Start Jenkins service and enable on boot.
+  service: name=jenkins state=started enabled=yes
+
+...

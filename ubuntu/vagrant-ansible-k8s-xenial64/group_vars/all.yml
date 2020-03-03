@@ -1,0 +1,6 @@
+---
+
+# Network implementation('flunnel', 'calico', 'canal')
+network: flannel
+
+...

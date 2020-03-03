@@ -1,0 +1,31 @@
+---
+# - debug: msg="user={{ansible_user}}"
+
+- name: install the java pre-requisties
+  apt: name=python-software-properties state=latest
+
+# - name: purge java 8 installer - to avoid problems if installation is repeated
+#   apt: name=oracle-java8-installer purge=yes state=absent
+      
+- name: Add the webupd8 APT repository
+  apt_repository: repo={{ java_repo_url }} state=present
+
+- name: Add an apt key by id from a keyserver
+  apt_key: keyserver={{ java_repo_url_key }} id=EEA14886
+
+- name: update cache and ignore errors in case of problems
+  apt: update_cache=yes # ignore_errors=yes
+
+- name: Automatically select the Oracle License
+  debconf: name={{ java_version }} question={{ java_accepted_oracle_license }} value='true' vtype='select'
+# shell: echo debconf {{ java_accepted_oracle_license }} select true | sudo debconf-set-selections
+# changed_when: false
+      
+- name: installing "{{ item }}" on Ubuntu
+  package: name={{ item }} state=present force=yes
+  with_items: "{{ java_packages }}"
+    
+
+- name: Set JAVA_HOME
+  shell: sudo echo {{ java_home }} >> ~/.bashrc
+...

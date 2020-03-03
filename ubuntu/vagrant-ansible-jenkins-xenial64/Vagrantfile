@@ -1,0 +1,64 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_API_VERSION = "2"
+VAGRANT_BOX_IMAGE = "ubuntu/xenial64"
+JENKINS_NODE_COUNT = 2
+JENKINS_NODE_BASE_IP = "192.168.33."
+
+Vagrant.configure(VAGRANT_API_VERSION) do |config|
+  config.ssh.insert_key = false
+  # if Vagrant.has_plugin?("vagrant-vbguest") then
+    # config.vbguest.auto_update = false
+  # end
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000]
+    vb.customize ["modifyvm", :id, "--memory", 1024]
+    vb.customize ["modifyvm", :id, "--cpus", 2]
+  end
+
+
+  # (1...JENKINS_NODE_COUNT).each do |node_id|
+  #   config.vm.define "jenkins-node-#{node_id}" do |node|
+  #     node.vm.hostname = "jenkins-node-#{node_id}"
+  #     node.vm.box = VAGRANT_BOX_IMAGE
+  #     node.vm.network "private_network", ip: "#{JENKINS_NODE_BASE_IP}#{11 + node_id}"
+  #     if node_id == JENKINS_NODE_COUNT
+  #       node.vm.provision :shell, inline: "echo Great stuff! All nodes are running."
+  #     end
+  #   end
+  # end
+ 
+  config.vm.define "jenkins-master" do |master|
+    master.vm.box = VAGRANT_BOX_IMAGE
+    master.vm.hostname = "jenkins-master"
+    master.vm.network "private_network", ip: "#{JENKINS_NODE_BASE_IP}#{10}"
+
+    # master.vm.provision "shell", path: "ansible/ansible-script.sh"
+
+    master.vm.provision :ansible_local do |ansible|  # :ansible, :ansible_local
+      ansible.playbook = "playbook.yml"
+      ansible.compatibility_mode = "2.0"
+      ansible.install_mode = :default #":default, :pip, :"
+      ansible.version = "2.9.4"
+      # ansible.config_file = 'ansible.cfg'
+      # ansible.inventory_path = 'inventory.ini'
+	    ansible.limit = 'all'
+      ansible.extra_vars = {
+        node_ip: "#{JENKINS_NODE_BASE_IP}#{10}"
+      }
+      ansible.groups = {
+        ansible_ssh_user: "vagrant",
+        ansible_ssh_pass: "vagrant"
+      }
+
+    end
+  end
+
+ 
+  # config.vm.provision "shell", inline: <<-SHELL
+  #   apt-get update
+  #   apt-get install -y apache2
+  # SHELLs
+end

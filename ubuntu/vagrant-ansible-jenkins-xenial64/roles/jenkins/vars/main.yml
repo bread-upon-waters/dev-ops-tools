@@ -1,0 +1,7 @@
+---
+jenkins:
+  repo_url: "deb http://pkg.jenkins.io/debian-stable binary"
+  # pkg_key: "https://pkg.jenkins.io/debian/jenkins-ci.org.key"
+  pkg_key: "https://pkg.jenkins.io/debian/jenkins.io.key"
+  java_options: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"
+...

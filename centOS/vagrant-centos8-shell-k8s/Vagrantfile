@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANT_API_VERSION = "2"
+VAGRANT_BOX_IMAGE = "centos/8"
+NODE_COUNT = 2
+NODE_BASE_IP = "192.168.33."
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+
+Vagrant.configure(VAGRANT_API_VERSION) do |config|
+  
+  config.vm.provision :shell, path: "bootstrap.sh"
+
+  config.ssh.insert_key = false
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
+
+  config.vm.provider "virtualbox" do |vb|
+    # vb.customize ["guestproperty", "set", :id, "/VirtualBox/GuestAdd/VBoxService/--timesync-set-threshold", 1000]
+    vb.customize ["modifyvm", :id, "--memory", 1024]
+    vb.customize ["modifyvm", :id, "--cpus", 2]
+  end
+
+  config.vm.define "k8smaster" do |master|
+    master.vm.box = VAGRANT_BOX_IMAGE
+    master.vm.hostname = "k8smaster.moeketsimokoena.co.za"
+    master.vm.network "private_network", ip: "#{NODE_BASE_IP}#{10}"
+    master.vm.provider "virtualbox" do |vb|
+      vb.name = "k8smaster"
+    end
+    master.vm.provision :shell, path: "bootstrap_k8smaster.sh"
+  end
+
+  (1...NODE_COUNT).each do |node_id|
+    config.vm.define "k8sworker-#{node_id}" do |node|
+      node.vm.hostname = "k8sworker-#{node_id}.moeketsimokoena.co.za"
+      node.vm.box = VAGRANT_BOX_IMAGE
+      node.vm.network "private_network", ip: "#{NODE_BASE_IP}#{10 + node_id}"
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = "k8sworker-#{node_id}"
+      end
+      if node_id == NODE_COUNT
+        node.vm.provision :shell, path: "bootstrap_k8sworker.sh"
+        node.vm.provision :shell, inline: "echo Great stuff! All nodes are running."
+      end
+    end
+  end
+
+end
