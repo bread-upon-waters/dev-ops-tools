@@ -55,12 +55,18 @@ sudo apt-get update -y && sudo apt install -y software-properties-common python-
 
 **Step \#1: Add Ansible Repository**
 ```bash
+############# Ubuntu ##############
 sudo apt-add-repository ppa:ansible/ansible
+############# CentOS ##############
+yum install https://dl.fedoraproject.org/pub/epel-release-latest-8.noearch.rpm
 ```
 
 **Step \#2: Install Ansible**
 ```bash
+############# Ubuntu ##############
 sudo apt-get install -y  ansible
+############# CentOS ##############
+yum install ansible -y
 ```
 
 **Step \#3: Add Ansible User**
