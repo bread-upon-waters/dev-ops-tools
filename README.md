@@ -43,6 +43,9 @@ vagrant up
 ```
 vagrant plugin install vagrant-winnfsd
 ```
+```
+vagrant plugin install vagrant-guest_ansible
+```
 
 > **INSTALL ANSIBLE**
 
