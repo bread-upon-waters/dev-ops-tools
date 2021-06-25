@@ -2,10 +2,11 @@
 
 ## Run  both Master only
 echo "[TASK 0] Run on both master & worker(s) "
+yum update -y -q
 
 # Updateing hosts file
 echo "[TASK 1] Update /etc/hosts file"
-cat >>/etc/hosts<<EOF
+cat <<EOF >>/etc/hosts
 192.168.33.10 k8smaster.moeketsimokoena.co.za k8smaster
 192.168.33.11 k8sworker-1.moeketsimokoena.co.za k8-worker-1
 EOF
@@ -14,13 +15,10 @@ EOF
 echo "[TASK 2] Install docker container engine"
 #yum install -q -y docker >/dev/null 2>&1 
 dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
-dnf list docker-ce
-dnf list containerd.io --showduplicates | sort -r
-dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-docker-ce-cli-19.03.6-3.el7.x86_64.rpm 
-dnf install --nobest -qy docker-ce-3:19.03.6-3.el7 docker-ce-cli-19.03.6-3.el7 containerd.io
-# dnf install --nobest -qy docker-ce-3:18.09.1-3.el7
-# dnf install --nobest -qy docker-ce-19.03.6 docker-ce-cli-19.03.6 containerd.io
-					  
+dnf makecache
+dnf install -y -q https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.2-3.el7.x86_64.rpm
+dnf -y -q install --nobest docker-ce
+				  
 # Enable docker service
 echo "[TASK 3] Enable & start docker service"
 systemctl enable --now docker >/dev/null 2>&1
@@ -40,7 +38,7 @@ systemctl stop firewalld
 
 # Add sysctl settings
 echo "[TASK 6] Add sysctl settings"
-cat >>/etc/sysctl.d/kubernetes.conf<<EOF
+cat <<EOF >>/etc/sysctl.d/kubernetes.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
@@ -57,7 +55,7 @@ swapoff -a
 
 # Add yum repo file for kubernetes
 echo "[TASK 8] Add yum repo file for kubernetes"
-cat >>/etc/yum.repos.d/kubernetes.repo<<EOF
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -70,7 +68,8 @@ EOF
 
 # Install Kubernetes
 echo "[TASK 9] Install Kubernetes(kubeadmin, kubelet & kubectl)"
-yum install -qy kubeadmin kubelet kubectl
+sudo dnf install -q -y kubeadm 
+#yum install -qy kubeadm kubelet kubectl
 
 ### Start & enable Kubernetes service
 echo "[TASK 10] Start & enable Kubernetes service"

@@ -13,18 +13,18 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
     machine.vm.synced_folder ".", "/vagrant", type: "nfs"
     machine.vm.network "private_network", ip: "192.168.33.10"
     machine.vm.provider "virtualbox" do |vb|
-      vb.gui = true
-      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      # vb.gui = true
+      # vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
       vb.customize ["modifyvm", :id, "--name", "control"]
 
-      vb.customize ["modifyvm", :id, "--pae", "on"]
-      vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
-      vb.customize ["modifyvm", :id, "--vtxvpid", "off"]
-      vb.customize ["modifyvm", :id, "--vtxux", "off"]
-      vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
+      # vb.customize ["modifyvm", :id, "--pae", "on"]
+      # vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
+      # vb.customize ["modifyvm", :id, "--vtxvpid", "off"]
+      # vb.customize ["modifyvm", :id, "--vtxux", "off"]
+      # vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
 
       vb.customize ["modifyvm", :id, "--memory", 1024]
-      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      # vb.customize ["modifyvm", :id, "--ioapic", "on"]
       vb.customize ["modifyvm", :id, "--cpus", 1]
       # vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
     end
@@ -43,18 +43,18 @@ Vagrant.configure(VAGRANT_VERSION) do |config|
       machine.vm.box = VAGRANT_BOX_IMAGE
       machine.vm.network "private_network", ip: "#{MACHINE_BASE_IP}#{11 + machine_id}"
       machine.vm.provider :virtualbox  do |vb|
-        vb.gui = true
-        vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+        # vb.gui = true
+        # vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
         vb.customize ["modifyvm", :id, "--name", "machine0#{machine_id}"]
 
-        vb.customize ["modifyvm", :id, "--pae", "on"]
-        vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
-        vb.customize ["modifyvm", :id, "--vtxvpid", "off"]
-        vb.customize ["modifyvm", :id, "--vtxux", "off"]
-        vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
+        # vb.customize ["modifyvm", :id, "--pae", "on"]
+        # vb.customize ["modifyvm", :id, "--hwvirtex", "off"]
+        # vb.customize ["modifyvm", :id, "--vtxvpid", "off"]
+        # vb.customize ["modifyvm", :id, "--vtxux", "off"]
+        # vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
 
         vb.customize ["modifyvm", :id, "--memory", 1024]
-        vb.customize ["modifyvm", :id, "--ioapic", "on"]
+        # vb.customize ["modifyvm", :id, "--ioapic", "on"]
         vb.customize ["modifyvm", :id, "--cpus", 1]
         # vb.customize ["modifyvm", :id, "--cableconnected1", "off"]
       end

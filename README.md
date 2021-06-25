@@ -1,9 +1,11 @@
 # DevOps Journey & DevOps Tools:
 DevOps is a phylosophy for effective development, deployment and operation of software using the entire software development lifecycle (SDLC)
+
 ## DevOps Tools:
 * Vagrant
 * Ansible
 * Kubernetes
+* OpenShift
 * Git
 * Maven
 * Jenkins
