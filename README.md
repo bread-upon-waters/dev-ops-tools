@@ -22,9 +22,9 @@ vagrant --version
 
 **Step 2\#: Add vagrant image box**
 ```bash
-vagrant box add ubuntu/xenial64
+vagrant box add ubuntu/xenial64 --provider=virtualbox
 ############# OR ##############
-vagrant box add centos/8
+vagrant box add centos/8 --provider=virtualbox
 ```
 
 **Step 3\#: Initialize the vagrant box**
